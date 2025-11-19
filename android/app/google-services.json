@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "919593783110",
+    "project_id": "jumpbook-2e3f5",
+    "storage_bucket": "jumpbook-2e3f5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:919593783110:android:9dd40bd5fb1e4540e61f47",
+        "android_client_info": {
+          "package_name": "com.example.jumpbook"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1_uz_a2Mq6-KCnG3NQEmTErkeB-KyqmM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
