@@ -6,14 +6,6 @@ import 'package:jumpbook/theme/app_colors.dart';
 import 'package:jumpbook/screens/home/widgets/jumpbook_app_bar.dart';
 import 'package:jumpbook/screens/jumps/widgets/jump_metadata_section.dart';
 
-// =========================================================
-// WIDGETS DE UI EXTRAÍDOS (Deben crearse en archivos separados)
-// =========================================================
-// import 'widgets/jump_metadata_section.dart';
-// import 'widgets/jump_details_section.dart';
-// import 'widgets/jump_gear_mode_section.dart';
-// =========================================================
-
 class AddJumpScreen extends StatefulWidget {
   const AddJumpScreen({super.key});
 
