@@ -8,6 +8,7 @@ class JumpSummaryCard extends StatelessWidget {
   final String exitAltitude;
   final String observations;
   final Color accent;
+  final int? jumpNumber;
 
   const JumpSummaryCard({
     super.key,
@@ -15,7 +16,8 @@ class JumpSummaryCard extends StatelessWidget {
     required this.type,
     required this.exitAltitude,
     required this.observations,
-    this.accent = const Color(0xFF5CC97B),
+    this.accent = const Color(0xFF5CC97B), 
+    this.jumpNumber,
   });
 
   @override
@@ -26,23 +28,35 @@ class JumpSummaryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Date:  $date",
-              style: TextStyle(fontSize: 16, color: AppColors.textPrimary, fontWeight: FontWeight.w600)),
+          Text(
+            "Date:  $date",
+            style: TextStyle(
+              fontSize: 16,
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
 
           const SizedBox(height: 6),
 
-          Text("Jump type:  $type",
-              style: TextStyle(color: AppColors.textSecondary)),
+          Text(
+            "Jump type:  $type",
+            style: TextStyle(color: AppColors.textSecondary),
+          ),
 
-          Text("Exit altitude:  $exitAltitude",
-              style: TextStyle(color: AppColors.textSecondary)),
+          Text(
+            "Exit altitude:  $exitAltitude",
+            style: TextStyle(color: AppColors.textSecondary),
+          ),
 
           const SizedBox(height: 6),
 
-          Text("Observations: $observations",
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: AppColors.textSecondary)),
+          Text(
+            "Observations: $observations",
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: AppColors.textSecondary),
+          ),
         ],
       ),
     );

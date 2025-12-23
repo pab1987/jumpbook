@@ -22,10 +22,7 @@ class AuthScaffold extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (header != null)...[
-                  header!,
-                  const SizedBox(height: 15),
-                ],
+                if (header != null) ...[header!, const SizedBox(height: 15)],
                 Text(
                   title,
                   style: const TextStyle(

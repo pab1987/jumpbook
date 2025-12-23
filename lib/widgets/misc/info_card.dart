@@ -38,23 +38,16 @@ class InfoCard extends StatelessWidget {
         crossAxisAlignment: alignment,
         children: [
           if (icon != null)
-            SizedBox(
-              height: iconSize,
-              width: iconSize,
-              child: icon!,
-            )
+            SizedBox(height: iconSize, width: iconSize, child: icon!)
           else if (iconAsset != null)
-            Image.asset(
-              iconAsset!,
-              height: iconSize,
-              width: iconSize,
-            ),
+            Image.asset(iconAsset!, height: iconSize, width: iconSize),
 
           SizedBox(height: spacing),
 
           Text(
             mainText,
-            style: mainTextStyle ??
+            style:
+                mainTextStyle ??
                 TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -68,7 +61,8 @@ class InfoCard extends StatelessWidget {
               child: Text(
                 text,
                 textAlign: TextAlign.center,
-                style: subTextStyle ??
+                style:
+                    subTextStyle ??
                     TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w400,

@@ -27,11 +27,11 @@ class JBInputField extends StatelessWidget {
     this.onTap,
     this.keyboard = TextInputType.text,
     this.validator,
-    this.height = 48, 
-    this.width, 
-    this.hintColor, 
+    this.height = 48,
+    this.width,
+    this.hintColor,
     this.labelColor,
-    this.textColor, 
+    this.textColor,
     this.onChanged,
   });
 
@@ -57,7 +57,7 @@ class JBInputField extends StatelessWidget {
           hintText: hint,
           filled: true,
           fillColor: AppColors.backgroundTextField,
-          
+
           labelStyle: TextStyle(
             color: labelColor ?? AppColors.focusText,
             fontSize: 14,

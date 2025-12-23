@@ -1,11 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jumpbook/models/jump_model.dart';
 
 import 'package:jumpbook/screens/auth/auth_screens.dart';
 import 'package:jumpbook/screens/jumps/add_jump.dart';
 import 'package:jumpbook/screens/home/home_screen.dart';
 import 'package:jumpbook/providers/auth_state_notifier.dart';
+import 'package:jumpbook/screens/jumps/all_jumps_screen.dart';
+import 'package:jumpbook/screens/jumps/jump_detail.dart';
 import 'package:jumpbook/screens/onboarding/onboarding_screen.dart';
 
 class AppRouter {
@@ -19,7 +22,7 @@ class AppRouter {
 
     refreshListenable: AuthStateNotifier(),
 
-    redirect: (context, state) {
+    /* redirect: (context, state) {
       final user = FirebaseAuth.instance.currentUser;
 
       // 👇 NUNCA bloquear onboarding
@@ -45,6 +48,24 @@ class AppRouter {
 
       // Todo bien, dejar pasar
       return null;
+    }, */
+    redirect: (context, state) {
+      final user = FirebaseAuth.instance.currentUser;
+
+      // NUNCA bloquear onboarding
+      if (state.matchedLocation == "/onboarding") return null;
+
+      // Ignorar pantallas secundarias
+      final secondaryScreens = ["/add_jump", "/all_jumps"];
+      if (secondaryScreens.contains(state.matchedLocation)) return null;
+
+      final authRoutes = ["/login", "/register"];
+      final loggingIn = authRoutes.contains(state.matchedLocation);
+
+      if (user == null) return loggingIn ? null : "/login";
+      if (loggingIn) return "/home";
+
+      return null;
     },
 
     routes: [
@@ -52,10 +73,37 @@ class AppRouter {
         path: '/onboarding',
         builder: (_, __) => const OnboardingScreen(),
       ),
+      GoRoute(
+        path: '/jump_detail',
+        builder: (context, state) {
+          final extra = state.extra;
+          late final Jump jump;
+          int? jumpNumber;
+
+          if (extra is Map<String, dynamic>) {
+            jump = extra['jump'] as Jump;
+            jumpNumber = extra['jumpNumber'] as int?;
+          } else {
+            jump = extra as Jump;
+          }
+
+          return JumpDetailScreen(jump: jump, jumpNumber: jumpNumber);
+        },
+      ),
+
       GoRoute(path: "/login", builder: (_, __) => const LoginScreen()),
       GoRoute(path: "/register", builder: (_, __) => const RegisterScreen()),
       GoRoute(path: "/home", builder: (_, __) => const HomeScreen()),
-      GoRoute(path: "/add_jump", builder: (_, __) => const AddJumpScreen()),
+      GoRoute(
+        path: "/add_jump",
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, __) => const AddJumpScreen(),
+      ),
+      GoRoute(
+        path: "/all_jumps",
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, __) => const AllJumpsScreen(),
+      ),
     ],
   );
 }

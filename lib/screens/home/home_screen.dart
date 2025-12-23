@@ -1,20 +1,32 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
+
+import 'package:jumpbook/providers/jump_providers.dart';
 import 'package:jumpbook/screens/home/widgets/jump_summary_card.dart';
-import 'package:jumpbook/theme/app_colors.dart';
-import 'package:jumpbook/widgets/buttons/custom_text_buttom.dart';
-import 'package:flutter/material.dart';
-import 'package:jumpbook/models/home_stats.dart';
 import 'package:jumpbook/screens/home/widgets/home_main_stats.dart';
 import 'package:jumpbook/screens/home/widgets/info_cards_row.dart';
 import 'package:jumpbook/screens/home/widgets/jumpbook_app_bar.dart';
+import 'package:jumpbook/theme/app_colors.dart';
+import 'package:jumpbook/widgets/buttons/custom_button.dart';
+import 'package:jumpbook/widgets/buttons/custom_text_buttom.dart';
+import 'package:jumpbook/models/home_stats.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
+  String formatDate(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')}/'
+        '${date.month.toString().padLeft(2, '0')}/'
+        '${date.year}';
+  }
+
   @override
-  Widget build(BuildContext context) {
-    // Datos temporales hasta que lleguen desde Firebase
+  Widget build(BuildContext context, WidgetRef ref) {
+    final jumpsAsync = ref.watch(jumpsStreamProvider);
+
+    // 🔹 Stats aún mock (luego los sacamos de Firebase)
     final stats = HomeStats(
       canopyHours: 5.8,
       freeflyHours: 1.6,
@@ -26,22 +38,16 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: const JumpbookAppBar(
-        icon: Icons.menu,
-        title: 'Jumpbook',
-      ),
-
+      appBar: const JumpbookAppBar(icon: Icons.menu, title: 'Jumpbook'),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🔷 Grupo superior (NO scrollea)
             HomeMainStats(stats: stats),
-            const SizedBox(height: 20),
-
+            const SizedBox(height: 10),
             const InfoCardsRow(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
 
             Text(
               "Recent jumps",
@@ -51,51 +57,80 @@ class HomeScreen extends StatelessWidget {
                 color: AppColors.textPrimary,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
 
-            // 🔥 SOLO ESTO SCROLLEA
+            /// 🔥 LISTA DE ÚLTIMOS 3 SALTOS
             Expanded(
-              child: ListView(
-                children: [
-                  JumpSummaryCard(
-                    date: "15/10/25",
-                    type: "Fun jump",
-                    exitAltitude: "12.000 ft",
-                    observations:
-                        "Salida estable. Con un poco de inestabilidad al abrir el paracaídas. Apertura a 4.500 ft. Aterrizaje suave.",
-                  ),
-                  const SizedBox(height: 12),
+              child: jumpsAsync.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (err, _) => Center(child: Text('Error: $err')),
+                data: (jumps) {
+                  if (jumps.isEmpty) {
+                    return const Center(
+                      child: Text('No hay saltos registrados'),
+                    );
+                  }
 
-                  JumpSummaryCard(
-                    date: "14/10/25",
-                    type: "Check dive",
-                    exitAltitude: "10.000 ft",
-                    observations:
-                        "Se realizaron los ejercicios correctamente...",
-                  ),
-                  const SizedBox(height: 12),
+                  final recentJumps = jumps.take(3).toList();
 
-                  JumpSummaryCard(
-                    date: "13/10/25",
-                    type: "Fun jump",
-                    exitAltitude: "11.500 ft",
-                    observations: "Salida en delta, un poco inestable...",
-                  ),
-                  const SizedBox(height: 20),
+                  return ListView(
+                    children: [
+                      ...recentJumps.map(
+                        (jump) {
+                          final jumpNumber = jumps.length - jumps.indexOf(jump);
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: GestureDetector(
+                              onTap: () => context.push(
+                                '/jump_detail',
+                                extra: {
+                                  'jump': jump,
+                                  'jumpNumber': jumpNumber,
+                                },
+                              ),
+                              child: JumpSummaryCard(
+                                date: formatDate(jump.date),
+                                type: jump.jumpType,
+                                exitAltitude: '${jump.exitAltitude} ft',
+                                observations: jump.observations,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
 
-                  CustomTextButton(
-                    text: 'Log out',
-                    onPressed: () => FirebaseAuth.instance.signOut(),
-                    fontSize: 16,
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ],
+                      /// 🔹 BOTÓN VER TODOS
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8, bottom: 24),
+                        child: CustomButton(
+                          text: 'View All Jumps',
+                          onPressed: () => context.push('/all_jumps'),
+                          backgroundColor: AppColors.addButton,
+                          borderRadius: 12,
+                          fontSize: 16,
+                          height: 40,
+                          fontWeight: FontWeight.w600,
+                          padding: EdgeInsets.zero,
+                        ),
+                      ),
+
+                      /// 🔹 LOGOUT
+                      CustomTextButton(
+                        text: 'Log out',
+                        onPressed: () => FirebaseAuth.instance.signOut(),
+                        fontSize: 16,
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ],
         ),
       ),
+
       floatingActionButton: Container(
         width: 60,
         height: 60,
@@ -109,17 +144,13 @@ class HomeScreen extends StatelessWidget {
               offset: const Offset(0, 4),
             ),
           ],
-        ) ,
+        ),
         child: IconButton(
           icon: const Icon(Icons.add, color: AppColors.addButton, size: 40),
-          onPressed: () {
-            context.go('/add_jump');
-          },
-        )
-        
+          onPressed: () => context.push('/add_jump'),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-
     );
   }
 }

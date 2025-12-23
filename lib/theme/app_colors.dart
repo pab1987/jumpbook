@@ -23,6 +23,5 @@ class AppColors {
   static const Color error = Color(0xFFEF4444);
   static const Color success = Color(0xFF22C55E);
 
-
   static const Color backgroundTextField = Color(0xFF3F4A52);
 }

@@ -111,4 +111,3 @@ class JBSelectField<T> extends StatelessWidget {
     );
   }
 }
-

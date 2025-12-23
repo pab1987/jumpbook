@@ -1,13 +1,7 @@
-enum Aircraft {
-  caravan,
-  twinOtter,
-  skyvan,
-  porter,
-  helicopter,
-}
+enum Aircraft { caravan, twinOtter, skyvan, porter, helicopter }
 
 enum FlightMode {
-  bellyToEarth,
+  belly,
   sitFly,
   headDown,
   tracking,
@@ -31,10 +25,4 @@ enum JumpType {
   other,
 }
 
-enum Dropzone {
-  xielo,
-  skylat,
-  vuelaepico,
-  airelibre,
-  paracaidismomx,
-}
+enum Dropzone { xielo, skylat, vuelaepico, airelibre, paracaidismomx }

@@ -10,7 +10,7 @@ import 'package:jumpbook/widgets/layout/custom_container.dart';
 
 class JumpMetadataSection extends StatelessWidget {
   final TextEditingController dateController;
-  final VoidCallback onDateChanged;
+  final void Function(DateTime date) onDateSelected;
 
   final Key aircraftKey;
   final Aircraft? selectedAircraft;
@@ -27,7 +27,7 @@ class JumpMetadataSection extends StatelessWidget {
   const JumpMetadataSection({
     super.key,
     required this.dateController,
-    required this.onDateChanged,
+    required this.onDateSelected,
     required this.aircraftKey,
     required this.selectedAircraft,
     required this.onAircraftChanged,
@@ -41,7 +41,6 @@ class JumpMetadataSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Aquí va todo el contenido del primer JumpbookCard (Date, Aircraft, Dropzone, Jump Type)
     const titleStyle = TextStyle(
       fontSize: 14,
       fontWeight: FontWeight.w500,
@@ -73,15 +72,19 @@ class JumpMetadataSection extends StatelessWidget {
                         context: context,
                         initialDate: DateTime.now(),
                         firstDate: DateTime(2000),
-                        lastDate: DateTime(2100),
+                        lastDate: DateTime.now(),
                       );
 
                       if (picked != null) {
+                        // UI (solo mostrar)
                         dateController.text =
-                            "${picked.year}-${picked.month}-${picked.day}";
-                        onDateChanged(); // Llama al setState del padre
+                            '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+
+                        // 🔥 FUENTE DE VERDAD
+                        onDateSelected(picked);
                       }
                     },
+
                     validator: (v) =>
                         v == null || v.isEmpty ? 'Required' : null,
                   ),
@@ -129,13 +132,13 @@ class JumpMetadataSection extends StatelessWidget {
                     height: 40,
                     hint: "Dz",
                     icon: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Image.asset(
-                                  "assets/icons/dropzone.png",
-                                  width: 20,
-                                  height: 20,
-                                ),
-                              ),
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.asset(
+                        "assets/icons/dropzone.png",
+                        width: 20,
+                        height: 20,
+                      ),
+                    ),
                     value: selectedDropzone,
                     items: Dropzone.values,
                     toLabel: (item) => enumToTitle(item.name),
@@ -155,13 +158,13 @@ class JumpMetadataSection extends StatelessWidget {
                     height: 40,
                     hint: "Select",
                     icon: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Image.asset(
-                                  "assets/icons/exit_freefall.png",
-                                  width: 20,
-                                  height: 20,
-                                ),
-                              ),
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.asset(
+                        "assets/icons/exit_freefall.png",
+                        width: 20,
+                        height: 20,
+                      ),
+                    ),
                     value: selectedJumpType,
                     items: JumpType.values,
                     toLabel: (item) => enumToTitle(item.name),

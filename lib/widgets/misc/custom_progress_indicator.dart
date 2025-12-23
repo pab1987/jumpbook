@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 class CustomSleekProgressIndicator extends StatelessWidget {
-
   final int currentJumps;
   final int targetJumps;
 

@@ -2,21 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:jumpbook/theme/app_colors.dart';
 
 class CustomTextButton extends StatelessWidget {
-
   final String text;
   final VoidCallback? onPressed;
   final Color? color;
   final double fontSize;
   final FontWeight fontWeight;
 
-
   const CustomTextButton({
-    super.key, 
-    required this.text, 
-    this.onPressed, 
-    this.color, 
-    required this.fontSize, 
-    required this.fontWeight
+    super.key,
+    required this.text,
+    this.onPressed,
+    this.color,
+    required this.fontSize,
+    required this.fontWeight,
   });
 
   @override

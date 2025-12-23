@@ -29,10 +29,7 @@ class SocialButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              assetPath,
-              height: 20,
-            ),
+            Image.asset(assetPath, height: 20),
             const SizedBox(width: 12),
             Text(
               text,
@@ -41,7 +38,7 @@ class SocialButton extends StatelessWidget {
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
-            )
+            ),
           ],
         ),
       ),

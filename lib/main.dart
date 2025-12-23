@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 //import 'package:jumpbook/controllers/auth_controller.dart';
 import 'package:jumpbook/router/app_router.dart';
 import 'package:jumpbook/theme/app_theme.dart';
@@ -8,10 +9,8 @@ import 'firebase_options.dart'; // generado por flutterfire configure
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(const JumpBookApp());
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  runApp(ProviderScope(child: const JumpBookApp()));
 }
 
 class JumpBookApp extends StatelessWidget {

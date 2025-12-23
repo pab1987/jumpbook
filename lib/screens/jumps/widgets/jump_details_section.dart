@@ -11,15 +11,17 @@ class JumpDetailsSection extends StatelessWidget {
   final TextEditingController speedMaxCtrl;
   final TextEditingController deploymentCtrl;
   final TextEditingController freefallCtrl;
+  final TextEditingController canopyTimeCtrl;
   final VoidCallback onChanged;
 
   const JumpDetailsSection({
-    super.key, 
+    super.key,
     required this.exitAltitudeCtrl,
     required this.speedMaxCtrl,
     required this.deploymentCtrl,
     required this.freefallCtrl,
-    required this.onChanged,
+    required this.onChanged, 
+    required this.canopyTimeCtrl,
   });
 
   @override
@@ -55,6 +57,13 @@ class JumpDetailsSection extends StatelessWidget {
             hintText: '50',
             label: "Freefall time (Seconds)",
             controller: freefallCtrl,
+            keyboardType: TextInputType.number,
+            onChanged: (_) => onChanged(),
+          ),
+          JBFieldRow(
+            hintText: '250',
+            label: "Canopy time (Seconds)",
+            controller: canopyTimeCtrl,
             keyboardType: TextInputType.number,
             onChanged: (_) => onChanged(),
           ),

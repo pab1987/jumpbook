@@ -50,6 +50,7 @@ class JBFieldRow extends StatelessWidget {
               controller: controller,
               enabled: enabled,
               onChanged: onChanged,
+
               ///textAlign: TextAlign.center,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
@@ -58,12 +59,14 @@ class JBFieldRow extends StatelessWidget {
                 filled: true,
                 fillColor: AppColors.backgroundTextField,
                 isDense: true,
-                hint: Text(hintText ?? '', style: TextStyle(
-                  color: AppColors.placeholder,
-                  fontSize: 15,
-                ),),
-                contentPadding:
-                    const EdgeInsets.symmetric( vertical: 10, horizontal: 12),
+                hint: Text(
+                  hintText ?? '',
+                  style: TextStyle(color: AppColors.placeholder, fontSize: 15),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 12,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
@@ -75,9 +78,7 @@ class JBFieldRow extends StatelessWidget {
                 ),
               ),
               style: TextStyle(
-                color: enabled
-                    ? AppColors.textPrimary
-                    : AppColors.placeholder,
+                color: enabled ? AppColors.textPrimary : AppColors.placeholder,
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),

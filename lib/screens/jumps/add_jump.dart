@@ -1,117 +1,66 @@
 import 'package:flutter/material.dart';
-import 'package:jumpbook/models/enums.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jumpbook/screens/jumps/widgets/jump_details_section.dart';
 import 'package:jumpbook/screens/jumps/widgets/jump_gear_mode_section.dart';
 import 'package:jumpbook/theme/app_colors.dart';
 import 'package:jumpbook/screens/home/widgets/jumpbook_app_bar.dart';
 import 'package:jumpbook/screens/jumps/widgets/jump_metadata_section.dart';
+import 'package:jumpbook/screens/jumps/add_jump/add_jump_notifier.dart';
 
-class AddJumpScreen extends StatefulWidget {
+class AddJumpScreen extends ConsumerStatefulWidget {
   const AddJumpScreen({super.key});
 
   @override
-  State<AddJumpScreen> createState() => _AddJumpScreenState();
+  ConsumerState<AddJumpScreen> createState() => _AddJumpScreenState();
 }
 
-class _AddJumpScreenState extends State<AddJumpScreen> {
+class _AddJumpScreenState extends ConsumerState<AddJumpScreen> {
   final _formKey = GlobalKey<FormState>();
 
   // Controladores
-  final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _observationController = TextEditingController();
+  final _dateController = TextEditingController();
+  final _observationController = TextEditingController();
   final exitAltitudeCtrl = TextEditingController();
   final speedMaxCtrl = TextEditingController();
   final deploymentCtrl = TextEditingController();
   final freefallCtrl = TextEditingController();
+  final canopyTimeCtrl = TextEditingController();
 
-  // Variables de Estado (Selección)
-  Aircraft? _selectedAircraft;
-  Dropzone? _selectedDropzone;
-  JumpType? _selectedJumpType;
-  FlightMode? _selectedFlightMode;
-  int? _selectedCanopySize;
-
-  // Claves para forzar el reinicio de los Selectors
+  // Keys para forzar reinicio de selects
   Key _aircraftKey = UniqueKey();
   Key _dropzoneKey = UniqueKey();
   Key _jumpTypeKey = UniqueKey();
   Key _canopySizeKey = UniqueKey();
   Key _flightModeKey = UniqueKey();
 
+  @override
+  void dispose() {
+    _dateController.dispose();
+    _observationController.dispose();
+    exitAltitudeCtrl.dispose();
+    speedMaxCtrl.dispose();
+    deploymentCtrl.dispose();
+    freefallCtrl.dispose();
+    canopyTimeCtrl.dispose();
+    super.dispose();
+  }
 
-  // Función para limpiar todos los campos
-  void _clearForm() {
+  void _regenerateKeys() {
+    // Usamos setState sólo para renovar claves de widgets (UI-only)
     setState(() {
-      // Limpiar controladores de texto
-      _dateController.clear();
-      exitAltitudeCtrl.clear();
-      speedMaxCtrl.clear();
-      deploymentCtrl.clear();
-      freefallCtrl.clear();
-      _observationController.clear();
-
-      // Limpiar variables de selección
-      _selectedAircraft = null;
-      _selectedDropzone = null;
-      _selectedJumpType = null;
-      _selectedFlightMode = null;
-      _selectedCanopySize = null;
-
-      // Forzar reconstrucción de Selectores (genera nuevas claves)
       _aircraftKey = UniqueKey();
       _dropzoneKey = UniqueKey();
       _jumpTypeKey = UniqueKey();
       _canopySizeKey = UniqueKey();
       _flightModeKey = UniqueKey();
-
-      _formKey.currentState?.reset();
     });
-  }
-
-  // Función o Getter que verifica si TODOS los campos obligatorios tienen datos
-  bool get isFormValid {
-    final textControllersValid =
-        _dateController.text.isNotEmpty &&
-        exitAltitudeCtrl.text.isNotEmpty &&
-        speedMaxCtrl.text.isNotEmpty &&
-        deploymentCtrl.text.isNotEmpty &&
-        freefallCtrl.text.isNotEmpty &&
-        _observationController.text.isNotEmpty;
-
-    final selectionFieldsValid =
-        _selectedAircraft != null &&
-        _selectedDropzone != null &&
-        _selectedJumpType != null &&
-        _selectedCanopySize != null &&
-        _selectedFlightMode != null;
-
-    return textControllersValid && selectionFieldsValid;
-  }
-
-  // Función de guardado (con impresión de datos)
-  void _saveJump() {
-    if (_formKey.currentState!.validate()) {
-      print("--- INICIO DE REGISTRO DE SALTO ---");
-      print("Aeronave: ${_selectedAircraft?.name ?? 'N/A'}");
-      print("Dropzone: ${_selectedDropzone?.name ?? 'N/A'}");
-      print("Tipo de Salto: ${_selectedJumpType?.name ?? 'N/A'}");
-      print("Modo de Vuelo: ${_selectedFlightMode?.name ?? 'N/A'}");
-      print("Canopy Size: ${_selectedCanopySize ?? 'N/A'} sq ft");
-      print("Fecha: ${_dateController.text}");
-      print("Alt. de Salida: ${exitAltitudeCtrl.text} ft");
-      print("Velocidad Máx: ${speedMaxCtrl.text} km/h");
-      print("Alt. de Apertura: ${deploymentCtrl.text} ft");
-      print("Tiempo Caída Libre: ${freefallCtrl.text} segundos");
-      print("Observaciones: ${_observationController.text}");
-      print("--- FIN DE REGISTRO DE SALTO ---");
-
-      // Limpiar después de guardar
-      _clearForm();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(addJumpProvider);
+    final notifier = ref.read(addJumpProvider.notifier);
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: const JumpbookAppBar(
@@ -125,49 +74,56 @@ class _AddJumpScreenState extends State<AddJumpScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 1. Metadatos del Salto (Fecha, Aeronave, DZ, Tipo)
+              // METADATA - ahora pasamos las keys requeridas
               JumpMetadataSection(
-                dateController: _dateController,
                 aircraftKey: _aircraftKey,
-                selectedAircraft: _selectedAircraft,
-                onAircraftChanged: (value) => setState(() => _selectedAircraft = value),
                 dropzoneKey: _dropzoneKey,
-                selectedDropzone: _selectedDropzone,
-                onDropzoneChanged: (value) => setState(() => _selectedDropzone = value),
                 jumpTypeKey: _jumpTypeKey,
-                selectedJumpType: _selectedJumpType,
-                onJumpTypeChanged: (value) => setState(() => _selectedJumpType = value),
-                onDateChanged: () => setState(() {}), // Trigger al seleccionar fecha
+                dateController: _dateController,
+                selectedAircraft: state.aircraft,
+                onAircraftChanged: (value) => notifier.setAircraft(value!),
+                selectedDropzone: state.dropzone,
+                onDropzoneChanged: (value) => notifier.setDropzone(value!),
+                selectedJumpType: state.jumpType,
+                onJumpTypeChanged: (value) => notifier.setJumpType(value!),
+                onDateSelected: (date) {
+                  notifier.setDate(date);
+                },
               ),
 
               const SizedBox(height: 12),
 
-              // 2. Detalles de Caída Libre (Altitudes, Velocidad, Tiempo)
+              // DETAILS
               JumpDetailsSection(
                 exitAltitudeCtrl: exitAltitudeCtrl,
                 speedMaxCtrl: speedMaxCtrl,
                 deploymentCtrl: deploymentCtrl,
                 freefallCtrl: freefallCtrl,
-                onChanged: () => setState(() {}), // Trigger al escribir
+                canopyTimeCtrl: canopyTimeCtrl,
+                onChanged: () {
+                  // si necesitas validar en caliente, hazlo aquí
+                },
               ),
 
               const SizedBox(height: 12),
 
-              // 3. Equipo y Modo de Vuelo (Canopy, Flight Mode, Observaciones)
+              // GEAR & MODE - también pasamos keys
               JumpGearAndModeSection(
                 canopySizeKey: _canopySizeKey,
-                selectedCanopySize: _selectedCanopySize,
-                onCanopySizeChanged: (value) => setState(() => _selectedCanopySize = value),
+                selectedCanopySize: state.canopySize,
+                onCanopySizeChanged: (value) => notifier.setCanopySize(value!),
                 flightModeKey: _flightModeKey,
-                selectedFlightMode: _selectedFlightMode,
-                onFlightModeChanged: (value) => setState(() => _selectedFlightMode = value),
+                selectedFlightMode: state.flightMode,
+                onFlightModeChanged: (value) => notifier.setFlightMode(value!),
                 observationController: _observationController,
-                onObservationChanged: () => setState(() {}), // Trigger al escribir
+                onObservationChanged: () {
+                  // ...
+                },
               ),
 
               const SizedBox(height: 24),
 
-              // === BOTÓN GUARDAR ===
+              // BOTÓN GUARDAR
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -178,17 +134,75 @@ class _AddJumpScreenState extends State<AddJumpScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: isFormValid ? _saveJump : null,
-                  child: const Text(
-                    'Save Jump',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                    ),
-                  ),
+                  onPressed: state.isSaving || !state.isValid
+                      ? null
+                      : () async {
+                          if (_formKey.currentState!.validate()) {
+                            final saved = await notifier.saveJump(
+                              exitAltitude: exitAltitudeCtrl.text,
+                              speedMax: speedMaxCtrl.text,
+                              deployment: deploymentCtrl.text,
+                              freefall: freefallCtrl.text,
+                              canopyTime: canopyTimeCtrl.text,
+                              observations: _observationController.text,
+                            );
+
+                            if (saved) {
+                              // Limpiar controllers locales y regenerar keys para reiniciar selects
+                              _formKey.currentState?.reset();
+                              _dateController.clear();
+                              _observationController.clear();
+                              exitAltitudeCtrl.clear();
+                              speedMaxCtrl.clear();
+                              deploymentCtrl.clear();
+                              freefallCtrl.clear();
+                              canopyTimeCtrl.clear();
+
+                              _regenerateKeys();
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Jump saved successfully!'),
+                                ),
+                              );
+                            } else {
+                              final errorMsg =
+                                  ref.read(addJumpProvider).error ??
+                                  'Error saving jump';
+                              ScaffoldMessenger.of(
+                                context,
+                              ).showSnackBar(SnackBar(content: Text(errorMsg)));
+                            }
+                          }
+                        },
+                  child: state.isSaving
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text(
+                          'Save Jump',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
+                        ),
                 ),
               ),
+
+              if (state.error != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Text(
+                    state.error!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
             ],
           ),
         ),

@@ -67,7 +67,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       // Continuar a la app
       print("Usuario registrado: ${updatedUser!.email}");
       print("Nombre: ${updatedUser.displayName}");
-
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
       setState(() {
@@ -146,7 +145,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             text: 'Log in >',
             fontSize: 16,
             fontWeight: FontWeight.w500,
-            onPressed: () {context.go('/login');},
+            onPressed: () {
+              context.go('/login');
+            },
             color: AppColors.primaryHover,
           ),
         ),

@@ -18,10 +18,7 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
-      style: TextStyle(
-        color: AppColors.textPrimary,
-
-      ),
+      style: TextStyle(color: AppColors.textPrimary),
       controller: controller,
       obscureText: obscure,
       cursorColor: AppColors.textPrimary,
@@ -32,7 +29,9 @@ class CustomTextField extends StatelessWidget {
         ),
         hintText: label,
         hintStyle: TextStyle(color: AppColors.placeholder),
-        prefixIcon:icon != null ? Icon(icon, color: AppColors.placeholder,) : null,
+        prefixIcon: icon != null
+            ? Icon(icon, color: AppColors.placeholder)
+            : null,
       ),
     );
   }

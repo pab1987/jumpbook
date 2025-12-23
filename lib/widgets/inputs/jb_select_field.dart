@@ -111,4 +111,3 @@ class JBSelectFieldEnum<T extends Enum> extends StatelessWidget {
     );
   }
 }
-

@@ -24,22 +24,15 @@ class JumpbookAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       scrolledUnderElevation: 0,
       leading: IconButton(
-        onPressed:
-            onIconPressed ??
-            () {
-              final router = GoRouter.of(context);
-
-              // La verificación de seguridad para evitar la excepción "nothing to pop"
-              if (router.canPop()) {
-                router.pop();
-              }
-              // Opcional: Si está en la raíz y no puede hacer pop, va a /home
-              else {
-                router.go('/home');
-              }
-            },
         icon: Icon(icon, color: AppColors.textPrimary),
+        onPressed: onIconPressed ?? () {
+          final navigator = Navigator.maybeOf(context);
+          if (navigator != null && navigator.canPop()) {
+            context.pop();
+          }
+        },
       ),
+
       title: Text(title, style: TextStyle(color: AppColors.textPrimary)),
       actions: [
         Padding(

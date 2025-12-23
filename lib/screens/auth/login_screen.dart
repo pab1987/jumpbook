@@ -133,7 +133,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 text: 'Google',
                 assetPath: 'assets/icons/google.png',
                 onPressed: () async {
-
                   try {
                     final userCredential = await AuthService.signInWithGoogle();
 
