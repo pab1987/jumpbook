@@ -11,7 +11,6 @@ import 'package:jumpbook/screens/home/widgets/jumpbook_app_bar.dart';
 import 'package:jumpbook/theme/app_colors.dart';
 import 'package:jumpbook/widgets/buttons/custom_button.dart';
 import 'package:jumpbook/widgets/buttons/custom_text_buttom.dart';
-import 'package:jumpbook/models/home_stats.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -26,15 +25,10 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final jumpsAsync = ref.watch(jumpsStreamProvider);
 
-    // 🔹 Stats aún mock (luego los sacamos de Firebase)
-    final stats = HomeStats(
-      canopyHours: 5.8,
-      freeflyHours: 1.6,
-      currentJumps: 70,
-      targetJumps: 100,
-      lastJumpDate: '2-11-25',
-      jpm: 5.2,
-    );
+
+
+    // Obtenemos los stats ya procesados desde el provider
+    final stats = ref.watch(homeStatsProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -46,7 +40,7 @@ class HomeScreen extends ConsumerWidget {
           children: [
             HomeMainStats(stats: stats),
             const SizedBox(height: 10),
-            const InfoCardsRow(),
+            const InfoCardsRow(), // TODO: implementar InfoCardsRow de forma dinamica
             const SizedBox(height: 10),
 
             Text(

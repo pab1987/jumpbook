@@ -95,9 +95,12 @@ class AppRouter {
       GoRoute(path: "/register", builder: (_, __) => const RegisterScreen()),
       GoRoute(path: "/home", builder: (_, __) => const HomeScreen()),
       GoRoute(
-        path: "/add_jump",
+        path: '/add_jump',
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (_, __) => const AddJumpScreen(),
+        builder: (context, state) {
+          final existingJump = state.extra as Jump?;
+          return AddJumpScreen(existingJump: existingJump);
+        },
       ),
       GoRoute(
         path: "/all_jumps",

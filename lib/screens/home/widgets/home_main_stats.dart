@@ -28,7 +28,7 @@ class HomeMainStats extends StatelessWidget {
               const SizedBox(height: 10),
               SideStat(
                 icon: 'assets/icons/exit_freefall.png',
-                value: stats.freeflyHours.toString(),
+                value: stats.freeFallHours.toString(),
                 label: 'Hours freefly',
               ),
             ],

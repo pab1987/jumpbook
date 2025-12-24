@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jumpbook/models/enums.dart';
+import 'package:jumpbook/models/jump_model.dart';
 import 'package:jumpbook/screens/jumps/widgets/jump_details_section.dart';
 import 'package:jumpbook/screens/jumps/widgets/jump_gear_mode_section.dart';
 import 'package:jumpbook/theme/app_colors.dart';
@@ -8,7 +10,8 @@ import 'package:jumpbook/screens/jumps/widgets/jump_metadata_section.dart';
 import 'package:jumpbook/screens/jumps/add_jump/add_jump_notifier.dart';
 
 class AddJumpScreen extends ConsumerStatefulWidget {
-  const AddJumpScreen({super.key});
+  final Jump? existingJump;
+  const AddJumpScreen({super.key, this.existingJump});
 
   @override
   ConsumerState<AddJumpScreen> createState() => _AddJumpScreenState();
@@ -32,6 +35,46 @@ class _AddJumpScreenState extends ConsumerState<AddJumpScreen> {
   Key _jumpTypeKey = UniqueKey();
   Key _canopySizeKey = UniqueKey();
   Key _flightModeKey = UniqueKey();
+
+  @override
+  void initState() {
+    super.initState();
+
+    final notifier = ref.read(addJumpProvider.notifier);
+
+    // Si es edición, llenamos los valores
+    if (widget.existingJump != null) {
+      final jump = widget.existingJump!;
+      _dateController.text =
+          "${jump.date.year}-${jump.date.month}-${jump.date.day}";
+      exitAltitudeCtrl.text = jump.exitAltitude;
+      speedMaxCtrl.text = jump.speedMax;
+      deploymentCtrl.text = jump.deployment;
+      freefallCtrl.text = jump.freefall;
+      canopyTimeCtrl.text = jump.canopyTime;
+      _observationController.text = jump.observations;
+
+      // Deferimos las modificaciones del provider hasta que termine el primer frame
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+
+        notifier.setAircraft(
+          Aircraft.values.firstWhere((e) => e.name == jump.aircraft),
+        );
+        notifier.setDropzone(
+          Dropzone.values.firstWhere((e) => e.name == jump.dropzone),
+        );
+        notifier.setJumpType(
+          JumpType.values.firstWhere((e) => e.name == jump.jumpType),
+        );
+        notifier.setFlightMode(
+          FlightMode.values.firstWhere((e) => e.name == jump.flightMode),
+        );
+        notifier.setCanopySize(jump.canopySize);
+        notifier.setDate(jump.date);
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -139,6 +182,7 @@ class _AddJumpScreenState extends ConsumerState<AddJumpScreen> {
                       : () async {
                           if (_formKey.currentState!.validate()) {
                             final saved = await notifier.saveJump(
+                              jumpId: widget.existingJump?.id,
                               exitAltitude: exitAltitudeCtrl.text,
                               speedMax: speedMaxCtrl.text,
                               deployment: deploymentCtrl.text,

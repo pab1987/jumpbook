@@ -28,6 +28,7 @@ class AddJumpNotifier extends Notifier<AddJumpState> {
   void reset() => state = AddJumpState.empty;
 
   Future<bool> saveJump({
+    String? jumpId,
     required String exitAltitude,
     required String speedMax,
     required String deployment,
@@ -73,13 +74,21 @@ class AddJumpNotifier extends Notifier<AddJumpState> {
         'createdAt': FieldValue.serverTimestamp(),
       };
 
-      await _firestore
+      final jumpsCollection = _firestore
           .collection('users')
           .doc(uid)
-          .collection('jumps')
-          .add(data);
+          .collection('jumps');
 
-      print('✅ Salto guardado en Firestore');
+      if (jumpId != null) {
+        // EDITAR SALTO EXISTENTE
+        await jumpsCollection.doc(jumpId).update(data);
+        print('✏️ Salto actualizado en Firestore');
+      } else {
+        // NUEVO SALTO
+        await jumpsCollection.add(data);
+        print('✅ Salto guardado en Firestore');
+      }
+
       reset();
       return true;
     } catch (e) {
