@@ -23,13 +23,13 @@ class HomeMainStats extends StatelessWidget {
               SideStat(
                 icon: 'assets/icons/canopy.png',
                 value: stats.canopyHours.toString(),
-                label: 'Hours canopy',
+                label: 'Canopy Hrs',
               ),
               const SizedBox(height: 10),
               SideStat(
                 icon: 'assets/icons/exit_freefall.png',
                 value: stats.freeFallHours.toString(),
-                label: 'Hours freefly',
+                label: 'FF Time',
               ),
             ],
           ),
@@ -57,7 +57,7 @@ class HomeMainStats extends StatelessWidget {
               SideStat(
                 icon: 'assets/icons/plane.png',
                 value: stats.jpm.toString(),
-                label: 'JPM',
+                label: 'Jumps / Mo',
               ),
             ],
           ),

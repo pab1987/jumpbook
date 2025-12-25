@@ -40,6 +40,7 @@ dependencies:
   lottie: ^3.3.2
   sign_in_with_apple: ^7.0.1
   sleek_circular_slider: ^2.1.0
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_lints: ^5.0.0
